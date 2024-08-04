@@ -23,7 +23,16 @@
       devShells.${system}.default = pkgs.mkShell {
         packages =
           with pkgs;
-          [ (python3.withPackages (pp: [ pp.pymupdf ])) ]
+          [
+            (python312.withPackages (
+              pp: with pp; [
+                pip
+                pymupdf
+                icecream
+              ]
+            ))
+            mupdf
+          ]
           ++ [
             statix
             deadnix
