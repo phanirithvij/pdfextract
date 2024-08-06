@@ -21,24 +21,19 @@
       formatter.${system} = treefmtCfg.wrapper;
       checks.${system}.formatting = treefmtCfg.check self;
       devShells.${system}.default = pkgs.mkShell {
-        packages =
-          with pkgs;
-          [
-            (python312.withPackages (
-              pp: with pp; [
-                pip
-                pymupdf
-                icecream
-              ]
-            ))
-            mupdf
-          ]
-          ++ [
-            statix
-            deadnix
-            treefmtCfg.wrapper
-            (lib.attrValues treefmtCfg.programs)
-          ];
+        venvDir = "./venv";
+        buildInputs = with pkgs.python312Packages; [
+          venvShellHook
+          python
+          pymupdf
+          icecream
+        ];
+        packages = with pkgs; [
+          statix
+          deadnix
+          treefmtCfg.wrapper
+          (lib.attrValues treefmtCfg.programs)
+        ];
       };
     };
 }
