@@ -2,10 +2,11 @@ import sys
 from pathlib import Path
 import fitz
 from icecream import ic
-import os
+import magic
+import zlib
 
-out = "out"
-os.makedirs(out, exist_ok=True)
+out = Path("out")
+out.mkdir(parents=True, exist_ok=True)
 
 doc = fitz.open(sys.argv[1])
 x = 0
@@ -45,4 +46,14 @@ for p in range(20):
             video_xref = doc.xref_get_key(xref, "EF/F")[1]
             video_xref = int(video_xref.split()[0])
             video_stream = doc.xref_stream_raw(video_xref)
-            (Path(out) / f"{p+1}-{video_filename}").write_bytes(video_stream)
+
+            out_file = out / f"{p+1}-{video_filename}"
+            out_stream = video_stream
+
+            fmagic = magic.from_buffer(video_stream[:2048])
+            if fmagic == "zlib compressed data":
+                out_stream = zlib.decompress(video_stream)
+            elif "Macromedia Flash data" in fmagic:
+                ic(f"skipping {video_filename}")
+                continue
+            out_file.write_bytes(out_stream)
