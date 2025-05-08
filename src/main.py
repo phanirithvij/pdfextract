@@ -1,8 +1,9 @@
+import sys
 import fitz
 
 
 def main():
-    doc = fitz.open("your.pdf")
+    doc = fitz.open(sys.argv[1])
     for p in range(20):
         page = doc[p]
         for im in page.get_images():

@@ -7,11 +7,11 @@ import os
 out = "out"
 os.makedirs(out, exist_ok=True)
 
-doc = fitz.open("your.pdf")
+doc = fitz.open(sys.argv[1])
 x = 0
 for p in range(20):
     page = doc[p]
-    annots = list([page.load_annot(x[0]) for x in page.annot_xrefs(page)])
+    annots = list([page.load_annot(c[0]) for c in page.annot_xrefs()])
     has_annots = len(annots) > 0
     if not has_annots:
         continue
